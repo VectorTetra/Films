@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Films.Models.Film>
+@{
+    ViewData["Title"] = "Найкращі фільми";
+}
+
+
+<form>
+    <input type="submit" asp-action="Add" name="AddButton" value="Додати новий фільм" class="addbutton" style="margin-top:10px;"/>
+</form>
+
+<p class="maintitle" style="margin-top:10px;">
+    10 найкращих фільмів
+</p>
+<div>
+    <table class="table">
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr style="margin:50px 0 50px 0;max-height:400px;">
+                    <td>
+                        <img src="@Url.Content(item.PosterPath)" style="width:300px;height:400px;"/>
+                    </td>
+                    <td>
+                        <div class="filmtitle pt24">
+                        @Html.DisplayFor(modelItem => item.Name)
+                        </div>
+                        <div class="monosp">
+                            @Html.DisplayNameFor(model => model.Genre) : @Html.DisplayFor(modelItem => item.Genre)
+                        </div>
+                        <div class="filmreleaseyear pt18 tright">
+                            @Html.DisplayFor(modelItem => item.ReleaseYear)
+                        </div>
+                        <div class="monosp">
+                            @Html.DisplayNameFor(model => model.Director) : @Html.DisplayFor(modelItem => item.Director)
+                        </div>
+                        <div class="filmdescr">
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="verticalcenter">
+                        <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
+                        <a asp-action="Details" asp-route-id="@item.Id">Подробиці</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
