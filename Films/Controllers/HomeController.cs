@@ -86,7 +86,7 @@ namespace Films.Controllers
         // POST: Films/Edit/Id
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([FromForm] IFormFile fileinput, int id, Film film)
+        public async Task<IActionResult> Edit([FromForm] IFormFile uploadedFile, int id, Film film)
         {
             
             try
@@ -99,17 +99,17 @@ namespace Films.Controllers
                 {
                     ModelState.AddModelError("", "Довжина опису фільму - мінімум 20 символів");
                 }
-                if (fileinput != null)
+                if (uploadedFile != null)
                 {
                     // Путь к папке Files
-                    string path = "/Files/" + fileinput.FileName; // имя файла
+                    string path = "/Files/" + uploadedFile.FileName; // имя файла
                     string vpath = "~" + path;
                     // Сохраняем файл в папку Files в каталоге wwwroot
                     // Для получения полного пути к каталогу wwwroot
                     // применяется свойство WebRootPath объекта IWebHostEnvironment
                     using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
                     {
-                        await fileinput.CopyToAsync(fileStream); // копируем файл в поток
+                        await uploadedFile.CopyToAsync(fileStream); // копируем файл в поток
                     }
                     //Film film = new Film { Name = Name, ReleaseYear = ReleaseYear, Genre = Genre, Director = Director, Description = Description };
                     film.PosterPath = vpath;
