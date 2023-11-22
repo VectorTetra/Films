@@ -15,7 +15,7 @@ namespace Films.Controllers
             _context = context;
             _appEnvironment = appEnvironment;
         }
-
+        
         public async Task<IActionResult> Index()
         {
             return View(await _context.Films.ToListAsync());
@@ -29,24 +29,34 @@ namespace Films.Controllers
         // POST: Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(IFormFile uploadedFile, Film film)
+        public async Task<IActionResult> Add(IFormFile uploadedFile, [Bind("Name,Director,Description,ReleaseYear,Genre")] Film film)
         {
             try
             {
-                // Путь к папке Files
-                string path = "/Files/" + uploadedFile.FileName; // имя файла
-                string vpath = "~" + path;
-                // Сохраняем файл в папку Files в каталоге wwwroot
-                // Для получения полного пути к каталогу wwwroot
-                // применяется свойство WebRootPath объекта IWebHostEnvironment
-                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                if (uploadedFile != null)
                 {
-                    await uploadedFile.CopyToAsync(fileStream); // копируем файл в поток
+                    // Путь к папке Files
+                    string path = "/Files/" + uploadedFile.FileName; // имя файла
+                    string vpath = "~" + path;
+                    // Сохраняем файл в папку Files в каталоге wwwroot
+                    // Для получения полного пути к каталогу wwwroot
+                    // применяется свойство WebRootPath объекта IWebHostEnvironment
+                    using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                    {
+                        await uploadedFile.CopyToAsync(fileStream); // копируем файл в поток
+                    }
+                    film.PosterPath = vpath;
+                    _context.Films.Add(film);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index");
                 }
-                film.PosterPath = vpath;
-                _context.Films.Add(film);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                else
+                {
+
+                    Console.WriteLine("uploadedFile is null");
+                    return BadRequest();
+                }
+                
             }
             catch (Exception ex)
             {
