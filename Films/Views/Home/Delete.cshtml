@@ -1,0 +1,56 @@
+﻿@model Films.Models.Film
+
+@{
+    ViewData["Title"] = "Видалення фільму";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Видалення фільму</h1>
+
+<h3>Ви точно хочете видалити цей фільм?</h3>
+<div>
+    <hr />
+    <table>
+        <tr>
+            <th>
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Name)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Name)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Genre)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Genre)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Director)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Director)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.ReleaseYear)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.ReleaseYear)
+                    </dd>
+                </dl>
+            </th>
+            <th>
+                <img src="@Url.Content(Model.PosterPath)" style="width:300px;height:400px;" />
+            </th>
+        </tr>
+    </table>
+   
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">На головну сторінку</a>
+    </form>
+</div>
+

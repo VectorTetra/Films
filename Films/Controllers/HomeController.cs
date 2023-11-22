@@ -32,6 +32,10 @@ namespace Films.Controllers
         {
             try
             {
+                if (film.Description.Length < 20)
+                {
+                    ModelState.AddModelError("", "Довжина опису фільму - мінімум 20 символів");
+                }
                 if (uploadedFile != null && ModelState.IsValid)
                 {
                     // Путь к папке Files
@@ -79,17 +83,22 @@ namespace Films.Controllers
             return View(film);
         }
 
-        // POST: Students/Edit/Id
+        // POST: Films/Edit/Id
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromForm] IFormFile fileinput, int id, Film film)
         {
-            if (id != film.Id)
-            {
-                return NotFound();
-            }
+            
             try
             {
+                if (id != film.Id)
+                {
+                    return NotFound();
+                }
+                if (film.Description.Length < 20)
+                {
+                    ModelState.AddModelError("", "Довжина опису фільму - мінімум 20 символів");
+                }
                 if (fileinput != null)
                 {
                     // Путь к папке Files
@@ -105,8 +114,12 @@ namespace Films.Controllers
                     //Film film = new Film { Name = Name, ReleaseYear = ReleaseYear, Genre = Genre, Director = Director, Description = Description };
                     film.PosterPath = vpath;
                 }
+                if (ModelState.IsValid)
+                {
                 _context.Update(film);
                 await _context.SaveChangesAsync();
+                }
+                else { return View(film); }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -122,6 +135,53 @@ namespace Films.Controllers
             return RedirectToAction("Index");
            
             //return View(film);
+        }
+
+        // GET: Films/Delete/Id
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var film = await _context.Films
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (film == null)
+            {
+                return NotFound();
+            }
+
+            return View(film);
+        }
+
+        // POST: Films/Delete/Id
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var student = await _context.Films.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Films.Remove(student);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        // GET: Films/Details/Id
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var film = await _context.Films
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (film == null)
+            {
+                return NotFound();
+            }
+
+            return View(film);
         }
 
         private bool FilmExists(int id)

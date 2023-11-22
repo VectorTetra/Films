@@ -1,0 +1,57 @@
+﻿@model Films.Models.Film
+
+@{
+    ViewData["Title"] = "Подробиці фільму";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Подробиці фільму</h1>
+<div>
+    <hr />
+    <table>
+        <tr>
+            <th>
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Name)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Name)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Genre)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Genre)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Director)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Director)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.ReleaseYear)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.ReleaseYear)
+                    </dd>
+                </dl>
+                <div>
+                    @Html.DisplayNameFor(model => model.Description)
+                </div>
+                <div class="filmdescr" style="margin-right:10px;">
+                    @Html.DisplayFor(model => model.Description)
+                </div>
+            </th>
+            <th style="width:auto">
+                <img src="@Url.Content(Model.PosterPath)" style="width:300px;height:400px;" />
+            </th>
+        </tr>
+    </table>
+
+
+    
+        <a asp-action="Index">На головну сторінку</a>
+   
+</div>
