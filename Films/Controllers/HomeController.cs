@@ -25,7 +25,6 @@ namespace Films.Controllers
         {
             return View();
         }
-
         // POST: Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -33,7 +32,7 @@ namespace Films.Controllers
         {
             try
             {
-                if (uploadedFile != null)
+                if (uploadedFile != null && ModelState.IsValid)
                 {
                     // Путь к папке Files
                     string path = "/Files/" + uploadedFile.FileName; // имя файла
@@ -45,6 +44,7 @@ namespace Films.Controllers
                     {
                         await uploadedFile.CopyToAsync(fileStream); // копируем файл в поток
                     }
+                    //Film film = new Film { Name = Name, ReleaseYear = ReleaseYear, Genre = Genre, Director = Director, Description = Description };
                     film.PosterPath = vpath;
                     _context.Films.Add(film);
                     await _context.SaveChangesAsync();
@@ -52,9 +52,7 @@ namespace Films.Controllers
                 }
                 else
                 {
-
-                    Console.WriteLine("uploadedFile is null");
-                    return BadRequest();
+                    return View(film);
                 }
                 
             }
@@ -66,10 +64,69 @@ namespace Films.Controllers
             }
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public async Task<IActionResult> Edit(int? id)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var film = await _context.Films.SingleOrDefaultAsync(m => m.Id == id);
+            if (film == null)
+            {
+                return NotFound();
+            }
+            return View(film);
+        }
+
+        // POST: Students/Edit/Id
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit([FromForm] IFormFile fileinput, int id, Film film)
+        {
+            if (id != film.Id)
+            {
+                return NotFound();
+            }
+            try
+            {
+                if (fileinput != null)
+                {
+                    // Путь к папке Files
+                    string path = "/Files/" + fileinput.FileName; // имя файла
+                    string vpath = "~" + path;
+                    // Сохраняем файл в папку Files в каталоге wwwroot
+                    // Для получения полного пути к каталогу wwwroot
+                    // применяется свойство WebRootPath объекта IWebHostEnvironment
+                    using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                    {
+                        await fileinput.CopyToAsync(fileStream); // копируем файл в поток
+                    }
+                    //Film film = new Film { Name = Name, ReleaseYear = ReleaseYear, Genre = Genre, Director = Director, Description = Description };
+                    film.PosterPath = vpath;
+                }
+                _context.Update(film);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!FilmExists(film.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction("Index");
+           
+            //return View(film);
+        }
+
+        private bool FilmExists(int id)
+        {
+            return _context.Films.Any(e => e.Id == id);
         }
     }
 }

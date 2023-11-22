@@ -16,7 +16,7 @@ namespace Films.Annotations
             if (value != null)
             {
                 string strval = value.ToString();
-                if (myGenres.Any(genre => genre == strval)) return true;
+                if (myGenres.Contains(strval)) return true;
             }
             return false;
         }

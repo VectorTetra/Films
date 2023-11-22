@@ -45,7 +45,7 @@
     padding:5px;
     background-color:aliceblue;
     color:darkslategrey;
-    border-radius:5%;
+    border-radius:5% 5%;
     vertical-align:bottom;
     overflow:auto;
     max-height:265px;
